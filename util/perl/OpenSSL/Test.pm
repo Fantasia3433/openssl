@@ -1184,13 +1184,13 @@ sub __wrap_cmd {
     my $cmd = shift;
     my $exe_shell = shift;
 
-    my @prefix = ( __bldtop_file("util", "shlib_wrap.sh") );
+    # Standard wrapper script to get the right environment settings
+    my @prefix = ( __bldtop_file("util", "opensslenv.sh") );
 
-    if(defined($exe_shell)) {
-	@prefix = ( $exe_shell );
-    } elsif ($^O eq "VMS" || $^O eq "MSWin32") {
-	# VMS and Windows don't use any wrapper script for the moment
-	@prefix = ();
+    # VMS and Windows don't use any wrapper script for the moment
+    if ($^O eq "VMS" || $^O eq "MSWin32") {
+        # However, if someone specified an EXE_SHELL, we still use it
+        @prefix = defined($exe_shell) ? ( $exe_shell ) : ();
     }
 
     return (@prefix, $cmd);
